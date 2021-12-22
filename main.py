@@ -7,6 +7,8 @@ from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
 
 st.title("Streamlit Hey There")
 
@@ -78,4 +80,18 @@ acc = accuracy_score(y_test, y_pred)
 st.write(f"Classifier = {classifier_name}")
 st.write(f"Accuracy = {acc}")
 
+# Plotting Principal Component Analysis
+# This method transforms no of dimensions in dataset to only two for visualization
+pca = PCA(2)
+x_projected = pca.fit_transform(x)
 
+x1 = x_projected[:, 0]
+x2 = x_projected[:, 1]
+
+fig = plt.figure()
+plt.scatter(x1, x2, c=y, alpha=0.8, cmap="viridis")
+plt.xlabel("Principal Component 1")
+plt.ylabel("Principal Component 2")
+plt.colorbar()
+
+st.pyplot(fig)
