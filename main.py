@@ -2,6 +2,12 @@ import streamlit as st
 from sklearn import datasets
 import numpy as np
 
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
 st.title("Streamlit Hey There")
 
 st.write("""
@@ -46,6 +52,30 @@ def add_parameter_ui(clf_name):
 		params["n_estimators"] = n_estimators
 	return params
 
-add_parameter_ui(classifier_name)
+params = add_parameter_ui(classifier_name)
+
+def get_classifier(clf_name, params):
+	if clf_name == "KNN":
+		clf = KNeighborsClassifier(n_neighbors=params["K"])
+	elif clf_name == "SVM":
+		clf = SVC(C=params["C"])
+	else:
+		clf = RandomForestClassifier(n_estimators=params["n_estimators"],
+																max_depth=params["max_depth"], random_state=1234)
+	return clf
+
+clf = get_classifier(classifier_name, params)
+
+# Classification
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=1234)
+
+clf.fit(x_train, y_train)
+y_pred = clf.predict(x_test)
+
+acc = accuracy_score(y_test, y_pred)
+
+# This print doesn't work if "f" is not involved
+st.write(f"Classifier = {classifier_name}")
+st.write(f"Accuracy = {acc}")
 
 
