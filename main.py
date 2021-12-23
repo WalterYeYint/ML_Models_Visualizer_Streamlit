@@ -46,7 +46,7 @@ def get_classifier(clf_name, params):
 																max_depth=params["max_depth"], random_state=1234)
 	return clf
 
-st.title("Streamlit Hey There")
+st.title("ML Models Visualizer")
 
 st.write("""
 # Explore different classifier
