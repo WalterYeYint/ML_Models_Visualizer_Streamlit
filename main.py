@@ -10,20 +10,6 @@ from sklearn.metrics import accuracy_score
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 
-st.title("Streamlit Hey There")
-
-st.write("""
-# Explore different classifier
-Which one is the best?
-""")
-
-dataset_name = st.sidebar.selectbox("Select Dataset", ("Iris", "Breast Cancer", "Wine Dataset"))
-st.write(dataset_name)
-
-classifier_name = st.sidebar.selectbox("Select Classifier", ("KNN", "SVM", "Random Forest"))
-
-
-
 def get_dataset(dataset_name):
 	if dataset_name == "Iris":
 		data = datasets.load_iris()
@@ -31,13 +17,9 @@ def get_dataset(dataset_name):
 		data = datasets. load_breast_cancer()
 	else:
 		data = datasets.load_wine()
-	x = data.data
+	X = data.data
 	y = data.target
-	return x, y
-
-x, y = get_dataset(dataset_name)
-st.write("shape of dataset", x.shape)
-st.write("number of classes", len(np.unique(y)))
+	return X, y
 
 def add_parameter_ui(clf_name):
 	params = dict()
@@ -54,8 +36,6 @@ def add_parameter_ui(clf_name):
 		params["n_estimators"] = n_estimators
 	return params
 
-params = add_parameter_ui(classifier_name)
-
 def get_classifier(clf_name, params):
 	if clf_name == "KNN":
 		clf = KNeighborsClassifier(n_neighbors=params["K"])
@@ -66,13 +46,31 @@ def get_classifier(clf_name, params):
 																max_depth=params["max_depth"], random_state=1234)
 	return clf
 
+st.title("Streamlit Hey There")
+
+st.write("""
+# Explore different classifier
+Which one is the best?
+""")
+
+dataset_name = st.sidebar.selectbox("Select Dataset", ("Iris", "Breast Cancer", "Wine Dataset"))
+st.write(dataset_name)
+
+classifier_name = st.sidebar.selectbox("Select Classifier", ("KNN", "SVM", "Random Forest"))
+
+X, y = get_dataset(dataset_name)
+st.write("shape of dataset", X.shape)
+st.write("number of classes", len(np.unique(y)))
+
+params = add_parameter_ui(classifier_name)
+
 clf = get_classifier(classifier_name, params)
 
 # Classification
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=1234)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1234)
 
-clf.fit(x_train, y_train)
-y_pred = clf.predict(x_test)
+clf.fit(X_train, y_train)
+y_pred = clf.predict(X_test)
 
 acc = accuracy_score(y_test, y_pred)
 
@@ -83,7 +81,7 @@ st.write(f"Accuracy = {acc}")
 # Plotting Principal Component Analysis
 # This method transforms no of dimensions in dataset to only two for visualization
 pca = PCA(2)
-x_projected = pca.fit_transform(x)
+x_projected = pca.fit_transform(X)
 
 x1 = x_projected[:, 0]
 x2 = x_projected[:, 1]
