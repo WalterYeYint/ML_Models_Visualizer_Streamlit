@@ -1,3 +1,5 @@
+# Execution cmd - streamlit run main.py
+
 import streamlit as st
 from sklearn import datasets
 import numpy as np
